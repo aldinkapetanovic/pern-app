@@ -40,7 +40,7 @@ const App = () => {
         onChange={(e) => setName(e.target.value)}
         placeholder="Add item"
       />
-      <button onClick={addItem}>Add</button>
+      <button className="add" onClick={addItem}>Add</button>
       <ul>
         {items.map(item => (
           // Inside your map function for rendering list items
