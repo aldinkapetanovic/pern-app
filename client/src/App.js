@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css';
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -42,11 +43,15 @@ const App = () => {
       <button onClick={addItem}>Add</button>
       <ul>
         {items.map(item => (
+          // Inside your map function for rendering list items
           <li key={item.id}>
             {item.name}
-            <button onClick={() => updateItem(item.id)}>Edit</button>
-            <button onClick={() => deleteItem(item.id)}>Delete</button>
+            <div className="button-group">
+              <button className="edit" onClick={() => updateItem(item.id)}>Edit</button>
+              <button className="delete" onClick={() => deleteItem(item.id)}>Delete</button>
+            </div>
           </li>
+
         ))}
       </ul>
     </div>
