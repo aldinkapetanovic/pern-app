@@ -6,6 +6,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: perndb
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
@@ -14,8 +16,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
+    # ports:
+      # - "5000:5000"
     environment:
       - NODE_ENV=production
     depends_on:
@@ -28,8 +30,8 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    ports:
-      - "8080:80"
+    # ports:
+    #   - "8080:80"
     depends_on:
       - backend
     restart: unless-stopped  # Add restart policy here

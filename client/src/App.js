@@ -5,31 +5,31 @@ import './App.css';
 const App = () => {
   const [items, setItems] = useState([]);
   const [name, setName] = useState('');
-  const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const serverUrl = process.env.REACT_APP_SERVER_URL || '';
 
   useEffect(() => {
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
-    const response = await axios.get(`${serverUrl}/items`);
+    const response = await axios.get(`${serverUrl}/api/items`);
     setItems(response.data);
   };
 
   const addItem = async () => {
-    await axios.post(`${serverUrl}/items`, { name });
+    await axios.post(`${serverUrl}/api/items`, { name });
     setName('');
     fetchItems();
   };
 
   const updateItem = async (id) => {
     const newName = prompt('Enter new name:');
-    await axios.put(`${serverUrl}/items/${id}`, { name: newName });
+    await axios.put(`${serverUrl}/api/items/${id}`, { name: newName });
     fetchItems();
   };
 
   const deleteItem = async (id) => {
-    await axios.delete(`${serverUrl}/items/${id}`);
+    await axios.delete(`${serverUrl}/api/items/${id}`);
     fetchItems();
   };
 
