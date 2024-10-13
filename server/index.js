@@ -11,8 +11,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Load environment variables based on NODE_ENV
-const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' :
-    process.env.NODE_ENV === 'development' ? '.env.dev' :
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' :
+    process.env.NODE_ENV === 'development' ? '.env.development' :
         '.env.local';
 
 dotenv.config({ path: envFile });
