@@ -17,15 +17,24 @@ const App = () => {
   };
 
   const addItem = async () => {
+    if (!name.trim()) return; // Prevent adding empty items
     await axios.post(`/api/items`, { name });
     setName('');
     fetchItems();
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      addItem();
+    }
+  };
+
   const updateItem = async (id) => {
     const newName = prompt('Enter new name:');
-    await axios.put(`/api/items/${id}`, { name: newName });
-    fetchItems();
+    if (newName) {
+      await axios.put(`/api/items/${id}`, { name: newName });
+      fetchItems();
+    }
   };
 
   const deleteItem = async (id) => {
@@ -39,12 +48,12 @@ const App = () => {
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
+        onKeyPress={handleKeyPress} // Add this line
         placeholder="Add item"
       />
       <button className="add" onClick={addItem}>Add</button>
       <ul>
         {items.map(item => (
-          // Inside your map function for rendering list items
           <li key={item.id}>
             {item.name}
             <div className="button-group">
@@ -52,7 +61,6 @@ const App = () => {
               <button className="delete" onClick={() => deleteItem(item.id)}>Delete</button>
             </div>
           </li>
-
         ))}
       </ul>
     </div>
