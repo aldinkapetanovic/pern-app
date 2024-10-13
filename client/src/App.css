@@ -5,6 +5,8 @@ body {
   padding: 20px;
   font-size: 1.5rem;
   /* Base font size for larger screens */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {

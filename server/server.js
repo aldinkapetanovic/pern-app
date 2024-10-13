@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // PostgreSQL client setup
 const pool = new Pool({
     user: 'postgres',
-    host: 'localhost',
+    host: 'postgres',
     database: 'perndb',
     password: 'password',
     port: 5432,
