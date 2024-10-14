@@ -71,7 +71,7 @@ services:
       -c max_replication_slots=10 
       -c hot_standby_feedback=on
     volumes:
-      - ./00_init.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - ./postgres/00_init.sql:/docker-entrypoint-initdb.d/00_init.sql
 
   postgres_replica:
     <<: *postgres-common
