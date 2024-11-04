@@ -5,8 +5,9 @@ import './App.css';
 const App = () => {
   const [items, setItems] = useState([]);
   const [name, setName] = useState('');
-  const [file, setFile] = useState(null); // State for file upload
+  const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
+  const [uploadedFileData, setUploadedFileData] = useState(null); // State for uploaded file metadata
 
   useEffect(() => {
     fetchItems();
@@ -59,12 +60,12 @@ const App = () => {
 
     try {
       const response = await axios.post('/api/upload', formData, {
-        // const response = await axios.post('http://localhost:5000/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       setMessage(response.data.message);
+      setUploadedFileData(response.data.metadata); // Store uploaded file metadata
       setFile(null); // Clear file input
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
@@ -99,6 +100,17 @@ const App = () => {
         <button type="submit">Upload</button>
       </form>
       {message && <p>{message}</p>}
+
+      {uploadedFileData && (
+        <div>
+          <h3>Uploaded File Metadata</h3>
+          <p><strong>Name:</strong> {uploadedFileData.name}</p>
+          <p><strong>Path:</strong> {uploadedFileData.path}</p>
+          <p><strong>Size:</strong> {uploadedFileData.size} bytes</p>
+          <p><strong>MIME Type:</strong> {uploadedFileData.mimeType}</p>
+          <p><strong>Upload Date:</strong> {new Date(uploadedFileData.uploadDate).toLocaleString()}</p>
+        </div>
+      )}
     </div>
   );
 };

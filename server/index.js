@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const { Pool } = require('pg');
 const cors = require('cors');
-// const { MinioClient } = require('minio');
 const { Client: MinioClient } = require('minio');
 const multer = require('multer');
 
@@ -53,9 +52,24 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         }
 
         // Upload to MinIO
-        await minioClient.putObject(process.env.MINIO_BUCKET_NAME, file.originalname, file.buffer, file.size);
+        await minioClient.putObject(
+            process.env.MINIO_BUCKET_NAME,
+            file.originalname,
+            file.buffer,
+            file.size
+        );
 
-        res.status(200).send({ message: 'File uploaded successfully.' });
+        // Prepare file metadata
+        const fileMetadata = {
+            path: `/${process.env.MINIO_BUCKET_NAME}/${file.originalname}`,
+            name: file.originalname,
+            size: file.size,
+            mimeType: file.mimetype,
+            uploadDate: new Date() // Capture the upload date
+        };
+        console.log("blah", fileMetadata);
+
+        res.status(200).send({ message: 'File uploaded successfully.', metadata: fileMetadata });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error uploading file.');
@@ -95,4 +109,3 @@ app.delete('/api/items/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
-
