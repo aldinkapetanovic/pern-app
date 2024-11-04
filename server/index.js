@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const { Pool } = require('pg');
 const cors = require('cors');
+// const { MinioClient } = require('minio');
+const { Client: MinioClient } = require('minio');
+const multer = require('multer');
 
 const app = express();
 const port = 5000;
@@ -24,6 +27,39 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
+});
+
+// MinIO client setup
+const minioClient = new MinioClient({
+    endPoint: process.env.MINIO_ENDPOINT.split('//')[1].split(':')[0],  // e.g., minio
+    port: Number(process.env.MINIO_ENDPOINT.split(':')[2]),  // e.g., 9000
+    useSSL: false,
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY,
+});
+
+// Setup multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// File upload endpoint
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+    try {
+        const file = req.file;
+
+        // Check if file is present
+        if (!file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        // Upload to MinIO
+        await minioClient.putObject(process.env.MINIO_BUCKET_NAME, file.originalname, file.buffer, file.size);
+
+        res.status(200).send({ message: 'File uploaded successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error uploading file.');
+    }
 });
 
 // CRUD operations

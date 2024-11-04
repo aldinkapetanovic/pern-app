@@ -5,7 +5,8 @@ import './App.css';
 const App = () => {
   const [items, setItems] = useState([]);
   const [name, setName] = useState('');
-  // const serverUrl = process.env.REACT_APP_SERVER_URL || '';
+  const [file, setFile] = useState(null); // State for file upload
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     fetchItems();
@@ -42,13 +43,41 @@ const App = () => {
     fetchItems();
   };
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      setMessage('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('/api/upload', formData, {
+        // const response = await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setMessage(response.data.message);
+      setFile(null); // Clear file input
+    } catch (error) {
+      setMessage('Error uploading file: ' + error.message);
+    }
+  };
+
   return (
     <div>
       <h1>Items</h1>
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        onKeyPress={handleKeyPress} // Add this line
+        onKeyPress={handleKeyPress}
         placeholder="Add item"
       />
       <button className="add" onClick={addItem}>Add</button>
@@ -63,6 +92,13 @@ const App = () => {
           </li>
         ))}
       </ul>
+
+      <h2>Upload File</h2>
+      <form onSubmit={handleUpload}>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">Upload</button>
+      </form>
+      {message && <p>{message}</p>}
     </div>
   );
 };
