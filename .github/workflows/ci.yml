@@ -36,6 +36,9 @@ jobs:
       - name: Check outputs
         run: echo ${{ steps.vars.outputs.sha_short }}
 
+      - name: Step
+        run: echo ${GITHUB_SHA::7}
+
       - name: Build and push postgres image
         working-directory: ./postgres
         run: |
